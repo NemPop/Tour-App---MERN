@@ -12,13 +12,10 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { login } from "../redux/features/authSlice";
+import { googleSignIn, login } from "../redux/features/authSlice";
 // import { GoogleLogin } from "react-google-login";
-import {
-  GoogleLogin,
-  GoogleOAuthProvider,
-  useGoogleLogin,
-} from "@react-oauth/google";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import jwt_decode from "jwt-decode";
 
 const initialState = {
   email: "",
@@ -46,10 +43,23 @@ const Login = () => {
     setFormValue({ ...formValue, [name]: value });
   };
 
-  const login123 = useGoogleLogin({
-    onSuccess: (codeResponse) => console.log(codeResponse),
-    flow: "auth-code",
-  });
+  const googleSucces = (response) => {
+    console.log(response);
+    var userObject = jwt_decode(response.credential);
+    console.log(userObject, response);
+    console.log(userObject.email);
+    const email = userObject?.email;
+    const name = userObject?.name;
+    const token = response?.credential;
+    const googleId = userObject?.jti;
+    const result = { email, name, token, googleId };
+    dispatch(googleSignIn({ result, navigate, toast }));
+  };
+
+  const googleFailure = (error) => {
+    toast.error(error);
+  };
+
   return (
     <div
       style={{
@@ -122,16 +132,16 @@ const Login = () => {
             cookiePolicy={"single_host_origin"}
           /> */}
           <GoogleOAuthProvider clientId="397873189782-uhi6j7b4vrt0pbcj5bv33le93i7ocj4j.apps.googleusercontent.com">
-            <GoogleLogin>
-              <MDBBtn
-                style={{ width: "100%" }}
-                color="danger"
-                onClick={() => login123()}
+            <MDBBtn style={{ width: "100%" }} color="danger">
+              <GoogleLogin
+                onSuccess={googleSucces}
+                onError={googleFailure}
+                width="100%"
               >
                 <MDBIcon className="me-2" fab icon="google" />
                 Google Sing In
-              </MDBBtn>
-            </GoogleLogin>
+              </GoogleLogin>
+            </MDBBtn>
           </GoogleOAuthProvider>
         </MDBCardBody>
 
