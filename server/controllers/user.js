@@ -54,3 +54,21 @@ export const signUp = asyncHandler(async (req, res) => {
   );
   res.status(201).json({ result, token });
 });
+
+export const googleSignin = asyncHandler(async (req, res) => {
+  const { email, name, token, googleId } = req.body;
+
+  const oldUser = await UserModel.findOne({ email });
+  if (oldUser) {
+    const result = { _id: oldUser._id.toString(), email, name };
+    return res.status(200).json({ result, token });
+  }
+
+  const result = await UserModel.create({
+    email,
+    name,
+    googleId,
+  });
+
+  res.status(201).json({ result, token });
+});
