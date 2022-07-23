@@ -51,7 +51,7 @@ const Login = () => {
     const email = userObject?.email;
     const name = userObject?.name;
     const token = response?.credential;
-    const googleId = userObject?.jti;
+    const googleId = userObject?.sub;
     const result = { email, name, token, googleId };
     dispatch(googleSignIn({ result, navigate, toast }));
   };
