@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const tourSchema = mongoose.Schema({
   title: String,
-  description: String,
+  description: { type: String, require: true },
   name: String,
   creator: String,
   tags: [String],

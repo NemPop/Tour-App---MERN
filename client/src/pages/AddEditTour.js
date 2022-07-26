@@ -12,11 +12,11 @@ import FileBase from "react-file-base64";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createTour } from "../redux/api";
+import { createTour } from "../redux/features/tourSlice";
 
 const initalState = {
   title: "",
-  descritpion: "",
+  description: "",
   tags: [],
 };
 
@@ -27,7 +27,7 @@ const AddEditTour = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { title, descritpion, tags } = tourData;
+  const { title, description, tags } = tourData;
 
   useEffect(() => {
     error && toast.error(error);
@@ -35,7 +35,7 @@ const AddEditTour = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (title && descritpion && tags) {
+    if (title && description && tags) {
       const updatedTourData = { ...tourData, name: user?.result?.name };
       dispatch(createTour({ updatedTourData, navigate, toast }));
       handleClear();
@@ -56,7 +56,7 @@ const AddEditTour = () => {
     });
   };
   const handleClear = () => {
-    setTourData({ title: "", descritpion: "", tags: [] });
+    setTourData({ title: "", description: "", tags: [] });
   };
 
   return (
@@ -92,8 +92,8 @@ const AddEditTour = () => {
                 placeholder="Enter Description"
                 type="text"
                 style={{ height: "200px" }}
-                value={descritpion}
-                name="descritpion"
+                value={description}
+                name="description"
                 onChange={onInputChange}
                 className="form-control"
                 required
