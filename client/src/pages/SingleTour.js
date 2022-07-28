@@ -10,13 +10,21 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router";
 
-import { getTour } from "../redux/features/tourSlice";
+import { getTour, getRelatedTours } from "../redux/features/tourSlice";
 import moment from "moment";
+import RelatedTours from "../components/RelatedTours";
 
 const SingleTour = () => {
   const dispatch = useDispatch();
-  const { tour } = useSelector((state) => ({ ...state.tour }));
+  const { tour, relatedTours } = useSelector((state) => ({ ...state.tour }));
   const { id } = useParams();
+  const tags = tour?.tags;
+
+  useEffect(() => {
+    if (tags) {
+      dispatch(getRelatedTours(tags));
+    }
+  }, [tags]);
 
   useEffect(() => {
     if (id) {
@@ -34,7 +42,6 @@ const SingleTour = () => {
             src={tour.imageFile}
             alt={tour.title}
           />
-
           <MDBCardBody>
             <h3>{tour.title}</h3>
             <span>
@@ -61,6 +68,8 @@ const SingleTour = () => {
               {tour.description}
             </MDBCardText>
           </MDBCardBody>
+
+          <RelatedTours relatedTours={relatedTours} tourId={id} />
         </MDBCard>
       </MDBContainer>
     </>

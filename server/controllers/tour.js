@@ -74,9 +74,23 @@ export const updateTour = expressAsyncHandler(async (req, res) => {
 
 export const getToursBySearch = expressAsyncHandler(async (req, res) => {
   const { searchQuery } = req.query;
-
+  console.log("Halllo", searchQuery);
   const title = new RegExp(searchQuery, "i");
   const tours = await TourModal.find({ title });
 
+  res.json(tours);
+});
+
+export const getToursByTag = expressAsyncHandler(async (req, res) => {
+  const { tag } = req.params;
+
+  const tours = await TourModal.find({ tags: { $in: tag } });
+  res.json(tours);
+});
+
+export const getRelatedTours = expressAsyncHandler(async (req, res) => {
+  const tags = req.body;
+
+  const tours = await TourModal.find({ tags: { $in: tags } });
   res.json(tours);
 });

@@ -24,9 +24,11 @@ const Header = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(search);
     if (search) {
       dispatch(searchTours(search));
       navigate(`/tours/search?searchQuery=${search}`);
+      setSearch("");
     } else {
       navigate("/");
     }
