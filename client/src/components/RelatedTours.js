@@ -1,0 +1,58 @@
+import React from "react";
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCardImage,
+  MDBCardText,
+  MDBCardTitle,
+  MDBCol,
+  MDBRow,
+} from "mdb-react-ui-kit";
+import { Link } from "react-router-dom";
+import { excerpt } from "../utility/index";
+const RelatedTours = ({ relatedTours, tourId }) => {
+  return (
+    <>
+      {relatedTours && relatedTours.length > 0 && (
+        <>
+          {relatedTours.length > 1 && <h4>Realted Tourts</h4>}
+          <MDBRow className="row-cols-1 row-cols-md-3 g-4">
+            {relatedTours
+              .filter((item) => item._id !== tourId)
+              .splice(0.3)
+              .map((item) => (
+                <MDBCol key={item._id}>
+                  <MDBCard>
+                    <Link to={`/tour/${item._id}`}>
+                      <MDBCardImage
+                        src={item.imageFile}
+                        alt={item.title}
+                        position="top"
+                      />
+                    </Link>
+                    <span className="text-start tag-card">
+                      {item.tags.map((tag) => (
+                        <Link to={`/tour/tag/${tag}`} key={tag}>
+                          #{tag}
+                        </Link>
+                      ))}
+                    </span>
+                    <MDBCardBody>
+                      <MDBCardTitle className="text-start">
+                        {item.title}
+                      </MDBCardTitle>
+                      <MDBCardText className="text">
+                        {excerpt(item.description, 45)}
+                      </MDBCardText>
+                    </MDBCardBody>
+                  </MDBCard>
+                </MDBCol>
+              ))}
+          </MDBRow>
+        </>
+      )}
+    </>
+  );
+};
+
+export default RelatedTours;
