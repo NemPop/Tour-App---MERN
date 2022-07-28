@@ -1,4 +1,4 @@
-import React, { useEffect, userEffect } from "react";
+import React, { useEffect } from "react";
 import {
   MDBCard,
   MDBCardTitle,
@@ -13,7 +13,9 @@ import {
 } from "mdb-react-ui-kit";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { getToursByUser } from "../redux/features/tourSlice";
+import { deleteTour, getToursByUser } from "../redux/features/tourSlice";
+import Spinner from "../components/Spinner";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const { user } = useSelector((state) => ({ ...state.auth }));
@@ -32,6 +34,16 @@ const Dashboard = () => {
       dispatch(getToursByUser(userId));
     }
   }, [userId]);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this tour?")) {
+      dispatch(deleteTour({ id, toast }));
+    }
+  };
   return (
     <div
       style={{
@@ -45,12 +57,8 @@ const Dashboard = () => {
       <hr style={{ maxWidth: "570px" }} />
       {userTours &&
         userTours.map((item) => (
-          <MDBCardGroup>
-            <MDBCard
-              style={{ maxWidth: "600px" }}
-              key={item._id}
-              className="mt-2"
-            >
+          <MDBCardGroup key={item._id}>
+            <MDBCard style={{ maxWidth: "600px" }} className="mt-2">
               <MDBRow className="g-0">
                 <MDBCol className="md-4">
                   <MDBCardImage
@@ -83,12 +91,13 @@ const Dashboard = () => {
                           icon="trash"
                           style={{ color: "#dd5b49" }}
                           size="lg"
+                          onClick={() => handleDelete(item._id)}
                         />
                       </MDBBtn>
-                      <Link to={`/editTour/${item.id}`}>
+                      <Link to={`/editTour/${item._id}`}>
                         <MDBIcon
                           fas
-                          icon="trash"
+                          icon="edit"
                           style={{ color: "#55acee", marginLeft: "10px" }}
                           size="lg"
                         />

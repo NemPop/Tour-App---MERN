@@ -44,3 +44,39 @@ export const getToursByUser = expressAsyncHandler(async (req, res) => {
   const userTours = await TourModal.find({ creator: id });
   res.status(200).json(userTours);
 });
+
+export const deleteTour = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: `No tour exist with id:${id}` });
+  }
+  await TourModal.findByIdAndRemove(id);
+  res.status(200).json({ message: "Tour Deleted successfully!" });
+});
+
+export const updateTour = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { title, description, creator, imageFile, tags } = req.body;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: `No tour exist with id:${id}` });
+  }
+  const updatedTour = {
+    creator,
+    title,
+    description,
+    tags,
+    imageFile,
+    _id: id,
+  };
+  await TourModal.findByIdAndUpdate(id, updatedTour, { new: true });
+  res.status(200).json(updatedTour);
+});
+
+export const getToursBySearch = expressAsyncHandler(async (req, res) => {
+  const { searchQuery } = req.query;
+
+  const title = new RegExp(searchQuery, "i");
+  const tours = await TourModal.find({ title });
+
+  res.json(tours);
+});
