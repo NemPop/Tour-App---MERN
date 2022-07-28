@@ -16,5 +16,11 @@ export const googleSignIn = (result) => API.post("/users/googleSignIn", result);
 
 export const createTour = (tourData) => API.post("/tours", tourData);
 export const getTours = () => API.get("/tours");
-export const getTour = (id) => API.get(`/tours/${id}`); //tour Id
+export const getTour = (id) => API.get(`/tours/${id}`);
+export const deleteTour = (id) => API.delete(`/tours/${id}`);
+export const updateTour = (updatedTourData, id) =>
+  API.patch(`/tours/${id}`, updatedTourData); //tour Id
 export const getToursByUser = (userId) => API.get(`/tours/userTours/${userId}`); //user Id
+
+export const getToursBySearch = (searchQuery) =>
+  API.get(`/tour/search?searchQuery=${searchQuery}`);

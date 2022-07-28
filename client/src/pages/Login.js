@@ -44,10 +44,8 @@ const Login = () => {
   };
 
   const googleSucces = (response) => {
-    console.log(response);
     var userObject = jwt_decode(response.credential);
-    console.log(userObject, response);
-    console.log(userObject.email);
+
     const email = userObject?.email;
     const name = userObject?.name;
     const token = response?.credential;
