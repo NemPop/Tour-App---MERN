@@ -21,7 +21,7 @@ const initialState = {
   email: "",
   password: "",
 };
-
+//397873189782-dsugsj32f6e60du5n1d8tb1c7hdleiqc.apps.googleusercontent.com
 const Login = () => {
   const [formValue, setFormValue] = useState(initialState);
   const { loading, error } = useSelector((state) => ({ ...state.auth }));
@@ -29,6 +29,10 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const devEnv = process.env.NODE_ENV !== "production";
+  const clientId = devEnv
+    ? "397873189782-uhi6j7b4vrt0pbcj5bv33le93i7ocj4j.apps.googleusercontent.com"
+    : "397873189782-dsugsj32f6e60du5n1d8tb1c7hdleiqc.apps.googleusercontent.com";
   useEffect(() => {
     error && toast.error(error);
   }, [error]);
@@ -113,7 +117,7 @@ const Login = () => {
           </MDBValidation>
           <br />
           {/* <GoogleLogin
-            clientId="397873189782-e4s8eetcnb78vf1a9qedknfos6oq46m0.apps.googleusercontent.com"
+            
             render={(renderProps) => (
               <MDBBtn
                 style={{ width: "100%" }}
@@ -129,7 +133,7 @@ const Login = () => {
             onFailure={googleFailure}
             cookiePolicy={"single_host_origin"}
           /> */}
-          <GoogleOAuthProvider clientId="397873189782-uhi6j7b4vrt0pbcj5bv33le93i7ocj4j.apps.googleusercontent.com">
+          <GoogleOAuthProvider clientId={clientId}>
             <MDBBtn style={{ width: "100%" }} color="danger">
               <GoogleLogin
                 onSuccess={googleSucces}
