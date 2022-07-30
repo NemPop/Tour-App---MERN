@@ -17,9 +17,9 @@ export const createTour = createAsyncThunk(
 
 export const getTours = createAsyncThunk(
   "tours/getTours",
-  async (_, { rejectWithValue }) => {
+  async (page, { rejectWithValue }) => {
     try {
-      const response = await api.getTours();
+      const response = await api.getTours(page);
 
       return response.data;
     } catch (error) {
@@ -117,6 +117,19 @@ export const getRelatedTours = createAsyncThunk(
   }
 );
 
+export const likeTour = createAsyncThunk(
+  "tours/likeTour",
+  async ({ _id }, { rejectWithValue }) => {
+    try {
+      const response = await api.likeTour(_id);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const tourSlice = createSlice({
   name: "tour",
   initialState: {
@@ -127,8 +140,14 @@ const tourSlice = createSlice({
     tagTours: [],
     error: "",
     loading: false,
+    currentPage: 1,
+    numberOfPages: 0,
   },
-
+  reducers: {
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+  },
   extraReducers: {
     [createTour.pending]: (state, action) => {
       state.loading = true;
@@ -146,7 +165,9 @@ const tourSlice = createSlice({
     },
     [getTours.fulfilled]: (state, action) => {
       state.loading = false;
-      state.tours = action.payload;
+      state.tours = action.payload.data;
+      state.numberOfPages = action.payload.numberOfPages;
+      state.currentPage = action.payload.currentPage;
     },
     [getTours.rejected]: (state, action) => {
       state.loading = false;
@@ -247,7 +268,24 @@ const tourSlice = createSlice({
       state.loading = false;
       state.error = action.payload.message;
     },
+    [likeTour.pending]: (state, action) => {},
+    [likeTour.fulfilled]: (state, action) => {
+      state.loading = false;
+
+      const {
+        arg: { _id },
+      } = action.meta;
+      if (_id) {
+        state.tours = state.tours.filter((item) =>
+          item._id === _id ? action.payload : item
+        );
+      }
+    },
+    [likeTour.rejected]: (state, action) => {
+      state.error = action.payload.message;
+    },
   },
 });
 
+export const { setCurrentPage } = tourSlice.actions;
 export default tourSlice.reducer;

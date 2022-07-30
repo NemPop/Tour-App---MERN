@@ -25,6 +25,7 @@ const TagTours = () => {
     if (tag) {
       dispatch(getToursByTag(tag));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tag]);
 
   if (loading) {

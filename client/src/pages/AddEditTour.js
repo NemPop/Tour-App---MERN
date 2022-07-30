@@ -37,10 +37,12 @@ const AddEditTour = () => {
       const singleTour = userTours.find((tour) => tour._id === id);
       setTourData({ ...singleTour });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
     error && toast.error(error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const handleSubmit = (e) => {
