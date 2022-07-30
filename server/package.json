@@ -5,7 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node index.js"
+    "dev": "node index.js",
+    "build": "cd client && npm install && npm run build"
+  },
+  "engines": {
+    "node": "17.6.0"
   },
   "author": "NemPop",
   "license": "ISC",
