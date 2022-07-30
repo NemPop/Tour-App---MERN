@@ -8,8 +8,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node index.js",
-    "build": "cd client && npm install && npm run build"
+    "dev": "node index.js"
   },
 
   "author": "NemPop",
