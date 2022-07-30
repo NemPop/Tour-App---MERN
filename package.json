@@ -2,6 +2,7 @@
     "name": "heroku-cra-node",
     "version": "3.0.0",
     "description": "How to use create-react-app with a custom Node API on Heroku",
+    "type": "module",
     "engines": {
       "node": "16.x"
     },
