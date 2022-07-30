@@ -7,7 +7,7 @@
     },
     "scripts": {
       "dev": "node server",
-      "build": "cd client/ && npm install && npm run dev"
+      "build": "cd server/ && npm install && npm run dev"
     },
     "cacheDirectories": [
       "node_modules",
