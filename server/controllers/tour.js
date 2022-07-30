@@ -17,9 +17,20 @@ export const createTour = expressAsyncHandler(async (req, res) => {
 });
 
 export const getTours = expressAsyncHandler(async (req, res) => {
-  const tours = await TourModal.find();
-  if (tours) return res.status(200).json(tours);
-  return res.status(404).json({ message: "Something went wrong" });
+  const { page } = req.query;
+
+  // const tours = await TourModal.find();
+  // if (tours) return res.status(200).json(tours);
+  const limit = 6;
+  const startIndex = (Number(page) - 1) * limit;
+  const total = await TourModal.countDocuments({});
+  const tours = await TourModal.find().limit(limit).skip(startIndex);
+  return res.status(200).json({
+    data: tours,
+    currentPage: Number(page),
+    totalTours: total,
+    numberOfPages: Math.ceil(total / limit),
+  });
 });
 
 export const getTour = expressAsyncHandler(async (req, res) => {
@@ -93,4 +104,31 @@ export const getRelatedTours = expressAsyncHandler(async (req, res) => {
 
   const tours = await TourModal.find({ tags: { $in: tags } });
   res.json(tours);
+});
+
+export const likesTour = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!req.userId) {
+    return res.json({ message: "User is not atuhenticated" });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: "User doesn't exist" });
+  }
+
+  const tour = await TourModal.findById(id);
+  const index = tour.likes.findIndex((id) => id === String(req.userId));
+
+  if (index === -1) {
+    tour.likes.push(req.userId);
+  } else {
+    tour.likes = tour.likes.filter((id) => id !== String(req.userId));
+  }
+
+  const updatedTour = await TourModal.findByIdAndUpdate(id, tour, {
+    new: true,
+  });
+
+  res.status(200).json(updatedTour);
 });

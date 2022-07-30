@@ -52,7 +52,7 @@ export const signUp = asyncHandler(async (req, res) => {
       expiresIn: "1h",
     }
   );
-  res.status(201).json({ result, token });
+  res.status(201).json({ result: oldUser, token });
 });
 
 export const googleSignin = asyncHandler(async (req, res) => {

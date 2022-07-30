@@ -13,8 +13,11 @@ app.use(cors());
 
 app.use("/users/", userRouter);
 app.use("/tours/", tourRouter);
-
+app.get("/", (req, res) => {
+  res.send("Welcome to tour API");
+});
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log("\x1b[36m", `Server runniong on port ${port}`);
 });
+//Hello
