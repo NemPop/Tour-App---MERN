@@ -1,1 +1,0 @@
-worker: cd server && npm run dev
