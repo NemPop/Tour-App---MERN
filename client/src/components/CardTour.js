@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { excerpt } from "../utility/index";
 import { likeTour } from "../redux/features/tourSlice";
+import Badge from "../components/Badge";
 
 const CardTour = ({
   imageFile,
@@ -23,6 +24,9 @@ const CardTour = ({
   tags,
   _id,
   likes,
+  socket,
+  creator,
+  category,
 }) => {
   const { user } = useSelector((state) => ({ ...state.auth }));
   const userId = user?.result?._id || user?.result?.googleId;
@@ -63,6 +67,13 @@ const CardTour = ({
 
   const handleLike = () => {
     dispatch(likeTour({ _id }));
+    const alreadyLiked = likes.find((like) => like === userId);
+    if (!alreadyLiked && userId !== creator) {
+      socket.emit("sendNotification", {
+        senderName: user?.result?.name,
+        receiverName: name,
+      });
+    }
   };
 
   return (
@@ -74,7 +85,10 @@ const CardTour = ({
           position="top"
           style={{ maxWidth: "100%", height: "180px" }}
         />
+
         <div className="top-left">{name}</div>
+
+        <Badge>{category}</Badge>
         <span className="text-start tag-card">
           {tags.map((tag) => (
             <Link to={`/tours/tag/${tag}`} key={tag}>

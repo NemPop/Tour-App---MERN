@@ -16,12 +16,16 @@ import { createTour, updateTour } from "../redux/features/tourSlice";
 const initalState = {
   title: "",
   description: "",
+  category: "",
   tags: [],
 };
+
+const categoryOption = ["Sea", "Beach", "Temple", "Hill", "Historic"];
 
 const AddEditTour = () => {
   const [tourData, setTourData] = useState(initalState);
   const [tagErrMsg, setTagErrMsg] = useState(null);
+  const [categoryErrMsg, setCategoryErrMsg] = useState(null);
   const { error, userTours } = useSelector((state) => ({
     ...state.tour,
   }));
@@ -29,7 +33,7 @@ const AddEditTour = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { title, description, tags } = tourData;
+  const { title, description, tags, category } = tourData;
   const { id } = useParams();
 
   useEffect(() => {
@@ -47,10 +51,13 @@ const AddEditTour = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!category) {
+      setCategoryErrMsg("Please select category");
+    }
     if (!tags.length) {
       setTagErrMsg("Please provide some tags!");
     }
-    if (title && description && tags) {
+    if (title && description && tags && category) {
       const updatedTourData = { ...tourData, name: user?.result?.name };
 
       if (!id) {
@@ -80,6 +87,10 @@ const AddEditTour = () => {
     setTourData({ title: "", description: "", tags: [] });
   };
 
+  const onCategoryChange = (e) => {
+    setCategoryErrMsg(null);
+    setTourData({ ...tourData, category: e.target.value });
+  };
   return (
     <div
       style={{
@@ -123,6 +134,24 @@ const AddEditTour = () => {
                 validation="Please provide description"
               />
             </div>
+            <div className="col-md-12">
+              <select
+                className="categoryDropdown"
+                onChange={onCategoryChange}
+                value={category}
+              >
+                <option>Please select category</option>
+                {categoryOption.map((option, index) => (
+                  <option value={option || ""} key={index}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              {categoryErrMsg && (
+                <div className="categoryErrMsg">{categoryErrMsg}</div>
+              )}
+            </div>
+
             <div className="col-md-12">
               <ChipInput
                 name="tags"
