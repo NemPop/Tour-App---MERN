@@ -32,4 +32,9 @@ export const getToursBySearch = (searchQuery) =>
   API.get(`/tours/search?searchQuery=${searchQuery}`);
 export const getToursByTag = (tag) => API.get(`/tours/tag/${tag}`);
 export const getRelatedTours = (tags) => API.post(`/tours/relatedTours`, tags);
+
 export const likeTour = (_id) => API.patch(`/tours/like/${_id}`);
+export const getAllTags = () => API.get("/tours/totalTags");
+export const getUserProfile = (id) => API.get(`/profile/${id}`);
+export const updateProfile = (id, userInfo) =>
+  API.patch(`/profile/${id}`, userInfo);

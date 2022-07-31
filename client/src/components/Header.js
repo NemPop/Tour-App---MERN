@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MDBNavbar,
   MDBContainer,
@@ -9,6 +9,8 @@ import {
   MDBCollapse,
   MDBNavbarBrand,
   MDBNavbarLink,
+  MDBBadge,
+  MDBBtn,
 } from "mdb-react-ui-kit";
 import { useSelector, useDispatch } from "react-redux";
 import { setLogout } from "../redux/features/authSlice";
@@ -16,13 +18,24 @@ import { searchTours } from "../redux/features/tourSlice";
 import { useNavigate } from "react-router";
 import decode from "jwt-decode";
 
-const Header = () => {
+const Header = ({ socket }) => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
+  const [notifications, setNotifications] = useState([]);
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => ({ ...state.auth }));
   const navigate = useNavigate();
   const token = user?.token;
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("getNotification", (data) => {
+        console.log(data);
+        setNotifications((prev) => [...prev, data]);
+      });
+    }
+  }, [socket]);
 
   if (token) {
     const decodedToken = decode(token);
@@ -45,6 +58,23 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(setLogout());
+  };
+
+  const handleBell = () => {
+    if (notifications.length) {
+      setOpen(!open);
+    }
+  };
+
+  const displayNotification = ({ senderName }) => {
+    return (
+      <span className="notification">{`${senderName} liked your tour`}</span>
+    );
+  };
+
+  const handleRead = () => {
+    setNotifications([]);
+    setOpen(false);
   };
 
   return (
@@ -94,13 +124,20 @@ const Header = () => {
               </>
             )}
             {user?.result?._id ? (
-              <MDBNavbarItem>
-                <MDBNavbarLink href="/login">
-                  <p className="header-text" onClick={handleLogout}>
-                    Logout
-                  </p>
-                </MDBNavbarLink>
-              </MDBNavbarItem>
+              <>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href="/login">
+                    <p className="header-text" onClick={handleLogout}>
+                      Logout
+                    </p>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href={`/profile/${user?.result?._id}`}>
+                    <p className="header-text">Profile</p>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+              </>
             ) : (
               <MDBNavbarItem>
                 <MDBNavbarLink href="/login">
@@ -121,6 +158,30 @@ const Header = () => {
               <MDBIcon fas icon="search" />
             </div>
           </form>
+          {user?.result?._id && (
+            <div className="mx-3" onClick={handleBell}>
+              <MDBIcon fas icon="bell" style={{ cursor: "pointer" }} />
+              <MDBBadge color="danger" notification pill>
+                {notifications.length > 0 && (
+                  <div className="counter">{notifications.length}</div>
+                )}
+              </MDBBadge>
+            </div>
+          )}
+          {open && (
+            <div className="notifications">
+              {notifications.map((n) => displayNotification(n))}
+              <div className="align-item-center">
+                <MDBBtn
+                  size="sm"
+                  style={{ width: "150px", backgroundColor: "#ec4a89" }}
+                  onClick={handleRead}
+                >
+                  Mark as Read
+                </MDBBtn>
+              </div>
+            </div>
+          )}
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>

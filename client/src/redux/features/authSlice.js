@@ -58,6 +58,12 @@ const authSlice = createSlice({
       localStorage.clear();
       state.user = null;
     },
+    setProfile: (state, action) => {
+      state.user.result = action.payload;
+      let localStorageResult = JSON.parse(localStorage.getItem("profile"));
+      localStorageResult.result = action.payload;
+      localStorage.setItem("profile", JSON.stringify(localStorageResult));
+    },
   },
   extraReducers: {
     [login.pending]: (state, action) => {
@@ -99,5 +105,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setLogout } = authSlice.actions;
+export const { setUser, setLogout, setProfile } = authSlice.actions;
 export default authSlice.reducer;

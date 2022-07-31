@@ -10,11 +10,12 @@ import {
   getToursByTag,
   getRelatedTours,
   likesTour,
+  getAllTags,
 } from "../controllers/tour.js";
 import auth from "../middleware/auth.js";
 
 const router = express.Router();
-
+router.get("/totalTags", getAllTags);
 router.get("/search", getToursBySearch);
 router.get("/", getTours);
 router.get("/:id", getTour);

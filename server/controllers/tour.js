@@ -25,10 +25,12 @@ export const getTours = expressAsyncHandler(async (req, res) => {
   const startIndex = (Number(page) - 1) * limit;
   const total = await TourModal.countDocuments({});
   const tours = await TourModal.find().limit(limit).skip(startIndex);
+  const totalToursData = await TourModal.find();
   return res.status(200).json({
     data: tours,
     currentPage: Number(page),
     totalTours: total,
+    totalToursData,
     numberOfPages: Math.ceil(total / limit),
   });
 });
@@ -67,7 +69,7 @@ export const deleteTour = expressAsyncHandler(async (req, res) => {
 
 export const updateTour = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { title, description, creator, imageFile, tags } = req.body;
+  const { title, description, creator, imageFile, tags, category } = req.body;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ message: `No tour exist with id:${id}` });
   }
@@ -76,6 +78,7 @@ export const updateTour = expressAsyncHandler(async (req, res) => {
     title,
     description,
     tags,
+    category,
     imageFile,
     _id: id,
   };
@@ -131,4 +134,11 @@ export const likesTour = expressAsyncHandler(async (req, res) => {
   });
 
   res.status(200).json(updatedTour);
+});
+
+export const getAllTags = expressAsyncHandler(async (req, res) => {
+  const tours = await TourModal.find();
+
+  const totalTags = [...new Set(tours.flatMap(({ tags }) => tags))];
+  res.json(totalTags);
 });
