@@ -40,13 +40,14 @@ const Home = ({ socket }) => {
   const location = useLocation();
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
+
   const counts = totalToursData.reduce((prevValue, currentValue) => {
     let name = currentValue.category;
     if (!prevValue.hasOwnProperty(name)) {
       prevValue[name] = 0;
     }
     prevValue[name]++;
-    delete prevValue["undefined"];
+    delete prevValue[""];
     return prevValue;
   }, {});
 
