@@ -142,6 +142,19 @@ export const likeTour = createAsyncThunk(
   }
 );
 
+export const loadMoreTour = createAsyncThunk(
+  "tours/loadMoreTour",
+  async (skip, { rejectWithValue }) => {
+    try {
+      const response = await api.loadMoreTour(skip);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const tourSlice = createSlice({
   name: "tour",
   initialState: {
@@ -156,6 +169,8 @@ const tourSlice = createSlice({
     numberOfPages: 0,
     totalTags: [],
     totalToursData: [],
+    loadedTours: [],
+    totalTours: null,
   },
   reducers: {
     setCurrentPage: (state, action) => {
@@ -306,6 +321,18 @@ const tourSlice = createSlice({
       state.totalTags = action.payload;
     },
     [getAllTags.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+    [loadMoreTour.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [loadMoreTour.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.loadedTours = [...state.loadedTours, ...action.payload.tours];
+      state.totalTours = action.payload.totalTours;
+    },
+    [loadMoreTour.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     },

@@ -16,6 +16,9 @@ import {
   updateUserProfile,
 } from "../redux/features/profileSlice";
 import { setProfile } from "../redux/features/authSlice";
+import { getToursByUser } from "../redux/features/tourSlice";
+import TopTour from "../components/TopTour";
+import Spinner from "../components/Spinner";
 
 const Profile = () => {
   const [editMode, setEditMode] = useState(false);
@@ -27,10 +30,15 @@ const Profile = () => {
     ...state.profile,
   }));
 
+  const { userTours } = useSelector((state) => ({ ...state.tour }));
+
+  const topTour = userTours?.length <= 3 ? userTours : userTours?.slice(0, 3);
   useEffect(() => {
     if (id) {
       dispatch(getUserProfile(id));
+      dispatch(getToursByUser(id));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleCancel = () => {
@@ -41,7 +49,9 @@ const Profile = () => {
     setEditMode(true);
     setInfo({ ...userDetail });
   };
-
+  if (loading) {
+    return <Spinner />;
+  }
   const handleSave = () => {
     if (!info.name || !info.occupation || !info.mobile || !info.address) {
       return toast.error("Please don't left field any empty!!!");
@@ -215,6 +225,8 @@ const Profile = () => {
           </MDBCard>
         </MDBCol>
       </MDBRow>
+      <h4 className="text-center">Top Tour</h4>
+      {topTour && <TopTour topTour={topTour} />}
     </div>
   );
 };

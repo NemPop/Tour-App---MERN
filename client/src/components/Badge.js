@@ -10,7 +10,7 @@ const Badge = ({ children }) => {
     Historic: "info",
   };
   return (
-    <h5 style={{ margin: "5px" }}>
+    <h5 className="mt-1">
       <MDBBadge color={colorKey[children]}>{children}</MDBBadge>
     </h5>
   );

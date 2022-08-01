@@ -40,7 +40,7 @@ const CardTour = ({
           &nbsp;
           {likes.length > 2 ? (
             <MDBTooltip
-              tag="a"
+              tag="span"
               title={`You and ${likes.length - 1} other likes`}
             >
               {likes.length} Likes
@@ -90,8 +90,8 @@ const CardTour = ({
 
         <Badge>{category}</Badge>
         <span className="text-start tag-card">
-          {tags.map((tag) => (
-            <Link to={`/tours/tag/${tag}`} key={tag}>
+          {tags.map((tag, index) => (
+            <Link to={`/tours/tag/${tag}`} key={index}>
               #{tag}
             </Link>
           ))}
@@ -102,7 +102,7 @@ const CardTour = ({
             onClick={!user?.result ? null : handleLike}
           >
             {!user?.result ? (
-              <MDBTooltip title="Please login to like tour" tag="a">
+              <MDBTooltip title="Please login to like tour" tag="span">
                 <Likes />
               </MDBTooltip>
             ) : (

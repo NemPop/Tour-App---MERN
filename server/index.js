@@ -13,9 +13,13 @@ app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
+const devEnv = process.env.NODE_ENV !== "production";
+
 const io = new Server({
   cors: {
-    origin: "http://localhost:3000",
+    origin: `${
+      devEnv ? "http://localhost:3000" : "https://tourpedia19.netlify.app/"
+    }`,
     methods: ["GET", "POST"],
     credentials: true,
   },

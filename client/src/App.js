@@ -18,6 +18,8 @@ import TagTours from "./pages/TagTours";
 import { io } from "socket.io-client";
 import Category from "./pages/Category";
 import Profile from "./pages/Profile";
+import Tours from "./pages/Tours";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   const [socket, setSocket] = useState(null);
@@ -41,8 +43,10 @@ function App() {
       <div className="App">
         <Header socket={socket} />
         <ToastContainer />
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home socket={socket} />} />
+          <Route path="/tours" element={<Tours />} />
           <Route path="/tours/search" element={<Home />} />
           <Route path="/tours/tag/:tag" element={<TagTours />} />
           <Route path="/tours/category/:category" element={<Category />} />

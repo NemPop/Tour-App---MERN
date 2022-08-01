@@ -7,8 +7,6 @@ import {
   MDBNavbarItem,
   MDBNavbarToggler,
   MDBCollapse,
-  MDBNavbarBrand,
-  MDBNavbarLink,
   MDBBadge,
   MDBBtn,
 } from "mdb-react-ui-kit";
@@ -17,6 +15,7 @@ import { setLogout } from "../redux/features/authSlice";
 import { searchTours } from "../redux/features/tourSlice";
 import { useNavigate } from "react-router";
 import decode from "jwt-decode";
+import { getUserProfile } from "../redux/features/profileSlice";
 
 const Header = ({ socket }) => {
   const [show, setShow] = useState(false);
@@ -27,6 +26,11 @@ const Header = ({ socket }) => {
   const { user } = useSelector((state) => ({ ...state.auth }));
   const navigate = useNavigate();
   const token = user?.token;
+  const userId = user?.result?._id || user?.result?.googleId;
+
+  const { userDetail } = useSelector((state) => ({
+    ...state.profile,
+  }));
 
   useEffect(() => {
     if (socket) {
@@ -36,6 +40,11 @@ const Header = ({ socket }) => {
       });
     }
   }, [socket]);
+
+  useEffect(() => {
+    userId && dispatch(getUserProfile(userId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   if (token) {
     const decodedToken = decode(token);
@@ -58,6 +67,7 @@ const Header = ({ socket }) => {
 
   const handleLogout = () => {
     dispatch(setLogout());
+    navigate("/");
   };
 
   const handleBell = () => {
@@ -80,12 +90,12 @@ const Header = ({ socket }) => {
   return (
     <MDBNavbar fixed="top" expand="lg" style={{ backgroundColor: "#f0e6ea" }}>
       <MDBContainer>
-        <MDBNavbarBrand
-          href="/"
+        <div
           style={{ color: "#606080", fontWeight: "600", fontSize: "22px" }}
+          onClick={() => navigate(`/`)}
         >
           Touropedia
-        </MDBNavbarBrand>
+        </div>
 
         <MDBNavbarToggler
           type="button"
@@ -98,51 +108,50 @@ const Header = ({ socket }) => {
         </MDBNavbarToggler>
         <MDBCollapse show={show} navbar>
           <MDBNavbarNav right fullWidth={false} className="mb-2 mb-lg-0">
-            {user?.result?._id && (
-              <h5 style={{ marginRight: "30px", marginTop: "27px" }}>
-                Logged in as: {user?.result?.name}
-              </h5>
-            )}
             <MDBNavbarItem>
-              <MDBNavbarLink href="/">
-                <p className="header-text">Home</p>
-              </MDBNavbarLink>
+              <p className="header-text" onClick={() => navigate("/")}>
+                Home
+              </p>
             </MDBNavbarItem>
             {user?.result?._id && (
               <>
                 {" "}
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/addTour">
-                    <p className="header-text">Add tour</p>
-                  </MDBNavbarLink>
+                  <p
+                    className="header-text"
+                    onClick={() => navigate("/addTour")}
+                  >
+                    Add tour
+                  </p>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/dashboard">
-                    <p className="header-text">Dashboard</p>
-                  </MDBNavbarLink>
+                  <p
+                    className="header-text"
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    Dashboard
+                  </p>
                 </MDBNavbarItem>
               </>
             )}
             {user?.result?._id ? (
               <>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/login">
-                    <p className="header-text" onClick={handleLogout}>
-                      Logout
-                    </p>
-                  </MDBNavbarLink>
+                  <p className="header-text" onClick={handleLogout}>
+                    Logout
+                  </p>
                 </MDBNavbarItem>
-                <MDBNavbarItem>
+                {/* <MDBNavbarItem>
                   <MDBNavbarLink href={`/profile/${user?.result?._id}`}>
                     <p className="header-text">Profile</p>
                   </MDBNavbarLink>
-                </MDBNavbarItem>
+                </MDBNavbarItem> */}
               </>
             ) : (
               <MDBNavbarItem>
-                <MDBNavbarLink href="/login">
-                  <p className="header-text">Login</p>
-                </MDBNavbarLink>
+                <p className="header-text" onClick={() => navigate("/login")}>
+                  Login
+                </p>
               </MDBNavbarItem>
             )}
           </MDBNavbarNav>
@@ -154,10 +163,53 @@ const Header = ({ socket }) => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             ></input>
-            <div style={{ marginTop: "5px", marginLeft: "5px" }}>
+            <div
+              style={{
+                marginTop: "5px",
+                marginLeft: "5px",
+              }}
+            >
               <MDBIcon fas icon="search" />
             </div>
           </form>
+          {userId && (
+            <>
+              <div
+                style={{
+                  cursor: "pointer",
+                  marginLeft: "10px",
+                  display: `${show && "inline-block"}`,
+                }}
+              >
+                <img
+                  src={
+                    userDetail?.imageFile
+                      ? userDetail.imageFile
+                      : "https://image.shutterstock.com/image-vector/man-icon-vector-260nw-1040084344.jpg"
+                  }
+                  alt={userDetail?.name}
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                    marginTop: "18px",
+                  }}
+                  onClick={() => navigate(`/profile/${userId}`)}
+                />
+                <p
+                  className="header-text"
+                  style={{
+                    float: "right",
+                    marginTop: "15px",
+                    marginLeft: "5px",
+                  }}
+                  onClick={() => navigate(`/profile/${userId}`)}
+                >
+                  {userDetail?.name}
+                </p>
+              </div>
+            </>
+          )}
           {user?.result?._id && (
             <div className="mx-3" onClick={handleBell}>
               <MDBIcon fas icon="bell" style={{ cursor: "pointer" }} />
