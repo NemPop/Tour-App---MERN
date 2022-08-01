@@ -142,3 +142,12 @@ export const getAllTags = expressAsyncHandler(async (req, res) => {
   const totalTags = [...new Set(tours.flatMap(({ tags }) => tags))];
   res.json(totalTags);
 });
+
+export const loadMoreTour = expressAsyncHandler(async (req, res) => {
+  const { skip } = req.query;
+  const limit = 5;
+  const totalTours = await TourModal.countDocuments({});
+  const tours = await TourModal.find().skip(Number(skip)).limit(limit);
+
+  res.status(200).json({ tours, totalTours });
+});

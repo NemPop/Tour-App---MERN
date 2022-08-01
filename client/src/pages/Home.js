@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { MDBCol, MDBContainer, MDBRow, MDBTypography } from "mdb-react-ui-kit";
+import {
+  MDBBtn,
+  MDBCol,
+  MDBContainer,
+  MDBRow,
+  MDBTypography,
+} from "mdb-react-ui-kit";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllTags,
@@ -9,7 +15,7 @@ import {
 import CardTour from "../components/CardTour";
 import Spinner from "../components/Spinner";
 import Pagination from "../components/Pagination";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import PopularTags from "../components/PopularTags";
 import Categories from "../components/Categories";
 
@@ -33,6 +39,7 @@ const Home = ({ socket }) => {
   const searchQuery = query.get("searchQuery");
   const location = useLocation();
   const [visible, setVisible] = useState(false);
+  const navigate = useNavigate();
   const counts = totalToursData.reduce((prevValue, currentValue) => {
     let name = currentValue.category;
     if (!prevValue.hasOwnProperty(name)) {
@@ -114,12 +121,26 @@ const Home = ({ socket }) => {
           <MDBCol size="3" className="mt-4">
             <PopularTags totalTags={totalTags} />
             <Categories categoryCount={categoryCount} />
+            <MDBBtn
+              className="mt-3"
+              style={{ width: "155%" }}
+              onClick={() => navigate("/tours")}
+            >
+              View All Tours
+            </MDBBtn>
           </MDBCol>
         )}
         {visible && (
           <div className="mt-4">
             <PopularTags totalTags={totalTags} />
             <Categories categoryCount={categoryCount} />
+            <MDBBtn
+              className="mt-3"
+              style={{ width: "100%" }}
+              onClick={() => navigate("/tours")}
+            >
+              View All Tours
+            </MDBBtn>
           </div>
         )}
         <div className="mt-4">

@@ -11,12 +11,15 @@ import {
   getRelatedTours,
   likesTour,
   getAllTags,
+  loadMoreTour,
 } from "../controllers/tour.js";
 import auth from "../middleware/auth.js";
 
 const router = express.Router();
 router.get("/totalTags", getAllTags);
+router.get("/loadMoreTour", loadMoreTour);
 router.get("/search", getToursBySearch);
+
 router.get("/", getTours);
 router.get("/:id", getTour);
 router.get("/tag/:tag", getToursByTag);
